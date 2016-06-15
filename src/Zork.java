@@ -4,19 +4,37 @@ public class Zork {
 	private static Scanner sc;
 	public static void main(String[] args)
 	{
-		boolean found=false;
-
-		int room=1;
 
 		Random rand=new Random();
+		
+		int[] visited = new int[9];
+		for(int i = 0; i < 9; i++){
+			visited[i] = rand.nextInt(1000)+1;
+		}
+		
+		boolean found=false;
+		int money = 0;
+		int room=1;
 
+
+		int badguy = rand.nextInt(8)+1;
+		int stolen = 0;
+		
 		sc = new Scanner(System.in);
 		
 		int count=1;
 
 		while (1>0)
 		{
-			printroom(room,found);		
+			money+=visited[room];
+			visited[room]=0;
+			if(room==badguy){
+				stolen=money;
+				money=0;
+				System.out.println("You ran into Mean Dave, he mugs you and takes all your money!");
+				badguy = -1;
+			}
+			printroom(room,found,money);
 
 			int direction=sc.nextInt();		
 
@@ -38,6 +56,21 @@ public class Zork {
 		}
 		System.out.println("You leave the house safely! \rYou took "+count+" steps.");
 		
+		System.out.println("You found:");
+		if(visited[1]==0)System.out.println("A dead scorpion");
+		if(visited[2]==0)System.out.println("A piano");
+		if(visited[3]==0)System.out.println("A spider");
+		if(visited[4]==0)System.out.println("Some bats");
+		if(visited[5]==0)System.out.println("Dusty boxes");
+		if(visited[6]==0)System.out.println("3 skeletons");
+		if(visited[7]==0)System.out.println("A treasure chest");
+		if(visited[8]==0)System.out.println("And piles of gold!");
+		
+		if(badguy==-1)System.out.println("You ran into Mean Dave! He stole " + stolen + " money!");
+		
+		System.out.println("You left with " + money + " money!  Congratulations!");
+		
+		
 		int ghost;
 		ghost=rand.nextInt(4);
 		
@@ -48,40 +81,40 @@ public class Zork {
 		
 	}
 
-	public static void printroom(int room, boolean found)
+	public static void printroom(int room, boolean found, int money)
 	{
 		switch(room)
 		{
 		case 1:System.out.println("You are standing in the foyer of an old house."
-				+ "\r You see a dead scorpion.");
+				+ "\rYou see a dead scorpion.");
 
 		System.out.println("You can (1) exit to the north or press 2 to quit");
 		break;
 
 		case 2: System.out.println("You are standing in the front room of an old house."
-				+ "\r You see a piano.");
+				+ "\rYou see a piano.");
 
 		System.out.println("You can (1) exit to the south, (2)exit to the west, (3)exit to east");
 		break;
 
 		case 3: System.out.println("You are standing in the library of an old house."
-				+ "\r You see spiders.");
+				+ "\rYou see spiders.");
 
 		System.out.println("You can (1) exit to the east or (2) exit to the north");
 		break;
 		case 4: System.out.println("You are standing in the kitchen of an old house."
-				+ "\r You see bats.");
+				+ "\rYou see bats.");
 
 		System.out.println("You can (1) exit to the west or (2) exit to the north");
 		break;
 		case 5: System.out.println("You are standing in the dining room of an old house."
-				+ "\r You see dust and empty box.");
+				+ "\rYou see dust and empty box.");
 
 		System.out.println("You can (1) exit to the south");
 		break;
 
 		case 6: System.out.println("You are standing in the vault of an old house."
-				+ "\r You see 3 walking skeletons.");
+				+ "\rYou see 3 walking skeletons.");
 
 		System.out.println("You can (1) exit to the east");
 		if(found)
@@ -91,12 +124,12 @@ public class Zork {
 		break;
 
 		case 7: System.out.println("You are standing in the parlor of an old house."
-				+ "\r You see treasure chest.");
+				+ "\rYou see treasure chest.");
 
 		System.out.println("You can (1) exit to the west or (2) exit to the south");
 		break;
 		case 8: System.out.println("You are standing in the secret room of an old house."
-				+ "\r You see piles of gold.");
+				+ "\rYou see piles of gold.");
 
 		System.out.println("You can (1) exit to the west");
 		break;
@@ -104,6 +137,7 @@ public class Zork {
 		break;	
 
 		}
+		System.out.println("You have " +money+ " money.");
 	}
 	public static int move(int room, int direction, boolean found)
 	{
