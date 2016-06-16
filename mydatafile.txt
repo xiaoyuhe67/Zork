@@ -1,8 +1,0 @@
-You visted room1, there is 97money 
-You visted room2, there is 143money 
-You visted room3, there is 305money 
-You visted room5, there is 900money 
-You visted room 1, there is 261 money 
-You visted room 2, there is 742 money 
-You visted room 3, there is 688 money 
-You visted room 4, there is 790 money 

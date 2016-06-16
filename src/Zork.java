@@ -8,7 +8,7 @@ import java.util.*;
 
 public class Zork {
 	private static Scanner sc;
-	private static final Boolean APPEND = true; 
+	private static final Boolean APPEND = false; 
 	public static void main(String[] args) throws IOException
 	{
 
@@ -22,16 +22,21 @@ public class Zork {
 		Random rand=new Random();
 		
 		int[] visited = new int[9];
+		int[] taken = {0,0,0,0,0,0,0,0,0};
 		for(int i = 0; i < 9; i++){
 			visited[i] = rand.nextInt(1000)+1;
 		}
 		
 		boolean found=false;
+		
+		boolean secretpassage=false;
 		int money = 0;
 		int room=1;
 
 
 		int badguy = rand.nextInt(8)+1;
+		int lamp = rand.nextInt(8)+1;
+		
 		int stolen = 0;
 		
 		sc = new Scanner(System.in);
@@ -40,24 +45,53 @@ public class Zork {
 
 		while (1>0)
 		{
-			money+=visited[room];
+			money+=visited[room];//Get money
 			
-			if(visited[room]!=0)
+			if(visited[room]!=0)// if player didn't visit the room
 			{
+				//write to the file
 				bwr.write("You visted room " +room + ", there is "+visited[room]+ " money \n");
 			}
 								
-			visited[room]=0;		
+			visited[room]=0;// set the money in the room is 0
+			
+			//if there is a bad guy in the room
 			if(room==badguy){
+				
 				stolen=money;
-				money=0;
+				money=0;// money is stolen
 				System.out.println("You ran into Mean Dave, he mugs you and takes all your money!");
-				badguy = -1;
+				badguy = -1; //bad guy is gone
 			}
+			//if there is a lamp in the room
+			if(room==lamp){
+				System.out.println("You found the magic lamp!  Type 'take item' to take it");
+				
+			}
+			//Describe the room
 			printroom(room,found,money);
-
-			String direction=sc.next();		
-     
+			
+			//if lamp is taken and the item in the room is not taken and room is not library
+			if(lamp==-1&&taken[room]==0&& room!=3)
+				
+				System.out.println("The lamp reveals " + lamp(room) + "type ', take item' to grab it!");
+			
+			//if lamp is taken and room is library and the secret passage is not found
+			if(room==3&& lamp==-1 && secretpassage==false)
+			{
+				System.out.print("The lamp reveals inspect scroll in the library");
+				System.out.println("Type 'inspect scroll' to check it out.");
+				
+			}
+			//if room is library and secret passage is found
+			if(room==3&&secretpassage==true)
+			{
+				System.out.println("Press 3 to take the secret passage.");
+			}
+            // prompt user to input
+			String direction=sc.nextLine();
+            
+			//if user type history read history file
 			if(direction.equals("history"))
 			{
 				bwr.flush();
@@ -68,23 +102,55 @@ public class Zork {
 			            System.out.println(line);
 			        }
 			        br.close();
-				} 
+				}
+			//if room is foyer, direction is 2, the user will quit the game
 			else if(room==1&& direction.equals("2"))
 			{	
 				break;
 						
-			}else 
+			}
+			//if room is library,lamp is taken, type inspect scrool to reveal secret passage
+			else if(direction.equals("inspect scroll"))
 			{
-				room=move(room,Integer.parseInt(direction),found);
-			
-            
-			count++;
-			if(room==6)
-			{
-				if(rand.nextInt(4)==0)
+				if(room==3&& lamp==-1)
 				{
-					found=true;
+					System.out.println("The scroll reveals the secret passage to the secret room!");
+					secretpassage=true;// secrete passage is found
+					taken[3]=1;// the item in the library is taken
+					
 				}
+			}
+			//if type take item
+			else if(direction.equals("take item")){
+				if(room==lamp){// there is a lamp in the room
+					lamp = -1;// take the lamp
+					found=true; 
+					bwr.write("You found the magic lamp in room " + room + "\n");
+				}
+				else{//there is no lamp in the room take item
+					bwr.write("You found the " + lamp(room) + "in room " + room + "\n");
+					taken[room]=1;// take items from this room
+				}
+			}
+			//if room is library, secret passage is found and type 3 to take the passage
+			else if(room==3 && secretpassage && direction.equals("3"))
+			{
+				room=8;// go to secret room
+				count++;// count the number of visited room
+			}
+			// normally move
+			else
+			{
+				room=move(room,Integer.parseInt(direction),found);//move the room		
+            
+				count++;// count the number of visited room
+				// if room is vault
+				if(room==6)
+				{
+					if(rand.nextInt(4)==0)//there is 25% to go to the secret room
+					{
+						found=true; // go to secret room
+					}
 			}
 			}
 			
@@ -182,6 +248,24 @@ public class Zork {
 		}
 		System.out.println("You have " +money+ " money.");
 	}
+	
+	public static String lamp(int room)
+	{
+		switch(room){
+		case 1: return "spider web made from pure silk";
+		case 2: return "the sheet music for your favorite song";
+		case 3: return  "a scroll on the wall";
+		case 4: return "a refrigerator full of your favorite food/drink";
+		case 5: return "the box is not actually empty, it contains an Amazon gift card";
+		case 7: return "a portrait of your favorite movie star and tickets to their latest movie";
+		case 8: return "contains a map of the house along with the piles of gold";
+		default: return "";
+		}
+		
+	}
+	
+	
+	
 	public static int move(int room, int direction, boolean found)
 	{
 
