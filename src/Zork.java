@@ -11,7 +11,7 @@ public class Zork {
 	private static final Boolean APPEND = false; 
 	public static void main(String[] args) throws IOException
 	{
-
+    try{
 		File file = new File("mydatafile.txt");
 
 		file.createNewFile();
@@ -90,6 +90,10 @@ public class Zork {
 			}
             // prompt user to input
 			String direction=sc.nextLine();
+			
+			if(direction.equals("kkk")){
+	            throw new MyAppException("You shouldn't enter kkk, you need to enter an integer or specific string");
+	        }
             
 			//if user type history read history file
 			if(direction.equals("history"))
@@ -185,7 +189,31 @@ public class Zork {
 		}
 		
 		
+
 		
+    }catch(IOException e)
+    {
+    	System.out.println(e.getMessage());
+    }
+    catch(ArrayIndexOutOfBoundsException e)
+    {
+    	System.out.println(e.getMessage());
+    }
+    catch(IndexOutOfBoundsException e)
+    {
+    	System.out.println(e.getMessage());
+    }
+    catch(NumberFormatException e)
+    {
+    	System.out.println(e.getMessage());
+    }
+    catch(MyAppException mae){
+        System.out.println("Inside catch block: "+mae.getMessage());
+    }
+    catch(Exception e)
+    {
+    	System.out.println(e.getMessage());
+    }
 			
 		
 	}
@@ -298,5 +326,8 @@ public class Zork {
 		return room;
 
 	}
+	
+
+	    
 
 }
