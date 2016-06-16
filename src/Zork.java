@@ -1,10 +1,24 @@
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.*;
 
 public class Zork {
 	private static Scanner sc;
-	public static void main(String[] args)
+	private static final Boolean APPEND = true; 
+	public static void main(String[] args) throws IOException
 	{
 
+		File file = new File("mydatafile.txt");
+
+		file.createNewFile();
+
+		FileWriter fwr = new FileWriter(file, APPEND);
+		BufferedWriter bwr = new BufferedWriter(fwr); 
+		
 		Random rand=new Random();
 		
 		int[] visited = new int[9];
@@ -27,7 +41,13 @@ public class Zork {
 		while (1>0)
 		{
 			money+=visited[room];
-			visited[room]=0;
+			
+			if(visited[room]!=0)
+			{
+				bwr.write("You visted room " +room + ", there is "+visited[room]+ " money \n");
+			}
+								
+			visited[room]=0;		
 			if(room==badguy){
 				stolen=money;
 				money=0;
@@ -36,14 +56,27 @@ public class Zork {
 			}
 			printroom(room,found,money);
 
-			int direction=sc.nextInt();		
-
-			if(room==1&& direction==2)
+			String direction=sc.next();		
+     
+			if(direction.equals("history"))
 			{
+				bwr.flush();
+				FileReader fr = new FileReader(file);
+			      BufferedReader br = new BufferedReader(fr);
+			      String line;
+			      while ( (line = br.readLine())!= null)     {
+			            System.out.println(line);
+			        }
+			        br.close();
+				} 
+			else if(room==1&& direction.equals("2"))
+			{	
 				break;
-			}
-
-			room=move(room,direction,found);
+						
+			}else 
+			{
+				room=move(room,Integer.parseInt(direction),found);
+			
             
 			count++;
 			if(room==6)
@@ -53,7 +86,13 @@ public class Zork {
 					found=true;
 				}
 			}
+			}
+			
 		}
+		
+		
+	    
+	    
 		System.out.println("You leave the house safely! \rYou took "+count+" steps.");
 		
 		System.out.println("You found:");
@@ -78,6 +117,10 @@ public class Zork {
 		{
 			System.out.println("You see a ghost!!");
 		}
+		
+		
+		
+			
 		
 	}
 
