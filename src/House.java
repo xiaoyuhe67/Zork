@@ -19,7 +19,8 @@ public class House {
 	static parlor parlor=new parlor();
 	static secretroom secretroom=new secretroom();
 	static Dungeon Dungeon=new Dungeon();
-	
+	static String direction;
+	static String content="";
 	
 	public static void main(String[] args) throws IOException
 	{
@@ -57,6 +58,8 @@ public class House {
 		sc = new Scanner(System.in);
 		
 		int count=1;
+		
+		LinkedList<String> ll=new LinkedList<String>();
 
 		while (1>0)
 		{		
@@ -64,8 +67,10 @@ public class House {
 			
 			if(visited[room]!=0)// if player didn't visit the room
 			{
-				//write to the file
+				//write to the file			
+				
 				bwr.write("You visted room " +room + ", there is "+visited[room]+ " money \n");
+				ll.add("You visted room " +room + ", there is "+visited[room]+ " money");
 			}
 								
 			visited[room]=0;// set the money in the room is 0
@@ -79,11 +84,11 @@ public class House {
 			System.out.print(lampInstance.ranintoLamp(room));
 			
 			//Describe the room
-			printroom(room,found,money);
+			System.out.println(printroom(room,found,money));;
 			
 			System.out.print(lampInstance.takeLamp(room));
             // prompt user to input
-			String direction=sc.nextLine();
+			direction=sc.nextLine();
 			
 			int dir=0;
 			
@@ -113,6 +118,7 @@ public class House {
 			      String line;
 			      while ( (line = br.readLine())!= null)     {
 			            System.out.println(line);
+			            content+=line+"\n";
 			        }
 			        br.close();
 				}
@@ -140,22 +146,29 @@ public class House {
 					lampInstance.setLamp(-1);// take the lamp
 					found=true; 
 					bwr.write("You found the magic lamp in room " + room + "\n");
+					ll.add("You found the magic lamp in room " + room );
 				}
 				else{//there is no lamp in the room take item
 					bwr.write("You found the " + lampInstance.lampDescription(room)+ "in room " + room + "\n");
+					ll.add("You found the " + lampInstance.lampDescription(room)+ "in room " + room );
 					lampInstance.setTakenItem(room);// take items from this room
 				}
 			}
 			//if room is library, secret passage is found and type 3 to take the passage
-			else if(room==3 && lampInstance.isSecretpassage() && direction.equals("3"))
+			else if(room==3 && lampInstance.isSecretpassage() && direction.equals("take secret passage"))
 			{
 				room=8;// go to secret room
 				count++;// count the number of visited room
 			}//
 			
+			else if(direction.equals("Enter")&&found==true&&room==6)
+			{
+				room=8;
+				count++;
+			}
 			
 			// normally move
-			else
+			else if(direction.equals("go East")||direction.equals("go South")||direction.equals("go West")||direction.equals("go North"))
 			{
 				room=move(room,dir,found);//move the room		
             
@@ -166,14 +179,14 @@ public class House {
 					if(rand.nextInt(4)==0)//there is 25% to go to the secret room
 					{
 						found=true; // go to secret room
+					}			
 					
-					if(direction.equals("2"))
-					{
-						room=8;
-						count++;
-					}
-					}
+				}
 			}
+			else
+			{
+				System.out.println("You can not go that way!");
+				continue;
 			}
 			
 		}
@@ -181,7 +194,16 @@ public class House {
 		int ghost;
 		ghost=rand.nextInt(4);
 		
+		for(int i=0;i<ll.size();i++)
+		{
+			System.out.println(ll.get(i));
+		}
+		
+		
+		
 		System.out.println(ret.goReportexit(count, visited, badguy.getBadguy(), ghost, badguy.getStolen(), money));
+		
+		
 		
     }catch(IOException e)
     {
@@ -204,63 +226,63 @@ public class House {
     {
     	System.out.println(e.getMessage());
     }
-			
-		
+				
 	}
 	
 
-	public static void printroom(int room, boolean found, int money)
+	public static String printroom(int room, boolean found, int money)
 	{
+		String content="";
 		switch(room)
 		{
-		case 1:System.out.println(foyer.getMessage());
-		       System.out.println("Press 'quit' to quit");
+		case 1:content+=(foyer.getMessage()+"\n");
+		       content+=("Press 'quit' to quit"+"\n");
 		break;
 
-		case 2: System.out.println(frontroom.getMessage());
-		        System.out.println("Press 'quit' to quit");
+		case 2: content+=(frontroom.getMessage()+"\n");
+				content+=("Press 'quit' to quit"+"\n");
 		break;
 
-		case 3: System.out.println(library.getMessage());
-		        System.out.println("Press 'quit' to quit");
+		case 3: content+=(library.getMessage()+"\n");
+		content+=("Press 'quit' to quit"+"\n");
 
 				break;
-		case 4: System.out.println(kitchen.getMessage());
-		        System.out.println("Press 'quit' to quit");
+		case 4: content+=(kitchen.getMessage()+"\n");
+		content+=("Press 'quit' to quit"+"\n");
 
 		break;
-		case 5: System.out.println(diningroom.getMessage());
-		        System.out.println("Press 'quit' to quit");
+		case 5: content+=(diningroom.getMessage()+"\n");
+		content+=("Press 'quit' to quit"+"\n");
 
 		break;
-
-		case 6: System.out.println(vault.getMessage());
-		        System.out.println("Press 'quit' to quit");
+		case 6: content+=(vault.getMessage()+"\n");
+		content+=("Press 'quit' to quit"+"\n");
 		if(found)
 		{
-			System.out.println("You see the secret room!! Press 2 to enter");
-			System.out.println("Press 'quit' to quit");
+			content+=("You see the secret room!! Press 'Enter' to enter"+"\n");
+			content+=("Press 'quit' to quit"+"\n");
 		}
 		break;
 
-		case 7: System.out.println(parlor.getMessage());
-		        System.out.println("Press 'quit' to quit");
+		case 7: content+=(parlor.getMessage()+"\n");
+		content+=("Press 'quit' to quit"+"\n");
 
 		break;
-		case 8: System.out.println(secretroom.getMessage());
-					System.out.println("Press 'quit' to quit");	
+		case 8: content+=(secretroom.getMessage()+"\n");
+		content+=("Press 'quit' to quit"+"\n");	
 
 		break;
-		case 9: System.out.println(Dungeon.getMessage());
-		  	  	System.out.println("Press 'quit' to quit");
+		case 9: content+=(Dungeon.getMessage()+"\n");
+		content+=("Press 'quit' to quit"+"\n");
 
 		break;
 		
-		default: System.out.println("You can't go that way");
+		default: content+=("You can't go that way"+"\n");
 		break;	
 
 		}
-		System.out.println("You have " +money+ " in total");
+		content+=("You have " +money+ " in total");
+		return content;
 		
 	}
 	
@@ -276,12 +298,7 @@ public class House {
 		case 3: if(library.getDirection().containsKey(direction)) return library.getDirection().get(direction); else return 0;
 		case 4: if(kitchen.getDirection().containsKey(direction)) return kitchen.getDirection().get(direction); else return 0; 
 		case 5: if(diningroom.getDirection().containsKey(direction)) return diningroom.getDirection().get(direction); else return 0;
-		case 6: if(vault.getDirection().containsKey(direction)) 
-			        if(found) 
-			        {
-			        	return vault.getDirection().get(direction);
-			        }
-			        else
+		case 6: if(vault.getDirection().containsKey(direction)) 	      
 			        	return vault.getDirection().get(direction);
 			    else return 0;
 		case 7: if(parlor.getDirection().containsKey(direction)) return parlor.getDirection().get(direction); else return 0;

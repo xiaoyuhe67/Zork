@@ -26,7 +26,7 @@ public class vault extends Room{
 		this.visited=false;
 		direction=new HashMap<Integer, Integer>();
 		this.direction.put(1, 7);
-		this.direction.put(1, 8);
+		//this.direction.put(1, 8);
 		this.direction.put(2, 9);
 		this.message="You are standing in the vault of an old house."+"\n"
 		+"There is "+this.money+" money. "+"\n"+"There is a "+this.items+" \n"
